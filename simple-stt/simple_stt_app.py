@@ -28,23 +28,17 @@ image = (
         {
             "HF_HUB_ENABLE_HF_TRANSFER": "1",
             "HF_HOME": CACHE_DIR,  # cache directory for Hugging Face models
-            "DEBIAN_FRONTEND": "noninteractive",
             "CXX": "g++",
             "CC": "g++",
-            "TORCH_HOME": CACHE_DIR,
         }
     )
     .apt_install("ffmpeg")
     .uv_pip_install(
         "hf_transfer==0.1.9",
         "huggingface_hub[hf-xet]==0.31.2",
-        "nemo_toolkit[asr]==2.3.0",
+        "nemo_toolkit[asr]==2.3.2",
         "cuda-python==13.0.1",
-        "numpy<2",
-        "torchaudio",
         "soundfile",
-        "resampy",
-        "fastapi[standard]",
     )
     .entrypoint([])  # silence chatty logs by container on start
 )
