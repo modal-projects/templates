@@ -2,46 +2,36 @@
 Client for the SimpleSTT Modal service.
 
 Usage:
-    python simple_stt_client.py [audio_source]
+    python simple_stt_client.py [url]
 
 Examples:
-    python simple_stt_client.py                        # uses default test audio
-    python simple_stt_client.py recording.wav          # local file
-    python simple_stt_client.py https://example.com/a.mp3
+    python simple_stt_client.py                              # uses default test audio
+    python simple_stt_client.py https://example.com/audio.wav
 """
 import argparse
 import time
 
 import modal
 
+DEFAULT_AUDIO_URL = "https://modal-cdn.com/a_dream_within_a_dream_16000_mono.wav"
+
 if __name__ == "__main__":
-    """
-    Transcribe an audio file or URL using the deployed SimpleSTT service.
-    
-    Args:
-        audio_source: Path to a local audio file or URL (optional, uses test audio if omitted).
-    """
-
-    # Default test audio URL from the app
-    DEFAULT_AUDIO_URL = "https://github.com/voxserv/audio_quality_testing_samples/raw/refs/heads/master/mono_44100/156550__acclivity__a-dream-within-a-dream.wav"
-
     parser = argparse.ArgumentParser(
         description="Transcribe audio using SimpleSTT."
     )
     parser.add_argument(
-        "audio_source",
+        "url",
         nargs="?",
         default=DEFAULT_AUDIO_URL,
-        help="Path to an audio file or URL to transcribe.",
+        help="URL to a WAV file (16kHz, mono). Uses test audio if omitted.",
     )
     args = parser.parse_args()
 
-    audio_source = args.audio_source
-
+    # Connect to the deployed SimpleSTT service
     stt = modal.Cls.from_name("simple-stt-template", "SimpleSTT")()
 
     start = time.perf_counter()
-    transcript = stt.transcribe.remote(audio_source)
+    transcript = stt.transcribe.remote(args.url)
     elapsed = time.perf_counter() - start
 
     print(f"Elapsed: {elapsed:.2f} seconds")

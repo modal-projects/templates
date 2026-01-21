@@ -18,10 +18,7 @@ modal deploy -m simple-stt.simple_stt_app
 
 ```bash
 # Transcribe a URL (uses test audio if omitted)
-python simple-stt/simple_stt_client.py https://example.com/audio.mp3
-
-# Transcribe a local file
-python simple-stt/simple_stt_client.py recording.wav
+python simple-stt/simple_stt_client.py https://example.com/audio.wav
 ```
 
 ### Programmatic access
@@ -31,11 +28,8 @@ import modal
 
 stt = modal.Cls.from_name("simple-stt-template", "SimpleSTT")()
 
-# From a URL
-transcript = stt.transcribe.remote("https://example.com/audio.mp3")
-
-# From a local file path
-transcript = stt.transcribe.remote("/path/to/audio.wav")
+# From a URL (WAV file, 16kHz, mono)
+transcript = stt.transcribe.remote("https://example.com/audio.wav")
 
 # From raw PCM bytes (16-bit, 16kHz, mono)
 transcript = stt.transcribe.remote(audio_bytes)
@@ -44,6 +38,5 @@ transcript = stt.transcribe.remote(audio_bytes)
 ## Input formats
 
 The `transcribe` method accepts:
-- **URL** — any audio format (converted via ffmpeg)
-- **File path** — any audio format (converted via ffmpeg)
+- **URL** — a URL pointing to a WAV file (16kHz, mono)
 - **Raw bytes** — 16-bit PCM at 16kHz, mono
