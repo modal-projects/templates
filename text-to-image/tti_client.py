@@ -46,10 +46,13 @@ if __name__ == "__main__":
     results_dir = args.results_dir
     image_name = args.image_name
 
+    print("Loading Stable Diffusion 3.5 Large Turbo on a cloud H100 GPU. View progress in Modal dashboard.")
+
     generator = modal.Cls.from_name("text-to-image", "ImageGenerator")()
 
     start = time.perf_counter()
     image_bytes = generator.generate.remote(prompt, batch_size=1)
+    print(f"Prompt: {prompt}")
     print(f"Elapsed: {time.perf_counter() - start:.2f} seconds")
 
     output_dir = Path(results_dir)
@@ -58,5 +61,3 @@ if __name__ == "__main__":
     output_path.write_bytes(image_bytes[0])
 
     print(f"✓ Image saved to: {output_path}")
-    print("Running Stable Diffusion 3.5 Large Turbo on a cloud H100 GPU")
-    print(f"Prompt: {prompt}")
