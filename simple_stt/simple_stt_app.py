@@ -1,7 +1,7 @@
 """
 Speech-to-text service using NVIDIA Parakeet on Modal.
 
-Deploy: modal deploy -m simple-stt.simple_stt_app
+Deploy: modal deploy simple-stt/simple_stt_app.py
 
 Usage:
     stt = modal.Cls.from_name("simple-stt-template", "SimpleSTT")()
@@ -38,16 +38,14 @@ image = (
     )
     .apt_install("ffmpeg")
     .uv_pip_install(
-        "hf_transfer==0.1.9",
         "huggingface_hub[hf-xet]==0.31.2",
         "nemo_toolkit[asr]==2.3.2",
         "cuda-python==13.0.1",
-        "soundfile",
-        "requests"
+        "soundfile==0.13.1",
+        "requests==2.32.5"
     )
     .entrypoint([])  # silence chatty logs by container on start
 )
-
 
 with image.imports():
     import nemo.collections.asr as nemo_asr
@@ -70,7 +68,7 @@ class SimpleSTT():
     """Transcribes audio files or URLs using NVIDIA's Parakeet ASR model."""
     
     @modal.enter()
-    async def setup(self):
+    def setup(self):
         """Load the ASR model and warm up the GPU on container start."""
         self._dtype = torch.bfloat16
 
@@ -88,20 +86,24 @@ class SimpleSTT():
 
         # run test request to warm up GPU
         for _ in range(4):
-            await self.transcribe.local(TEST_AUDIO_URL)
-
+            self.transcribe.local(TEST_AUDIO_URL)
 
     @modal.method()
-    async def transcribe(self, audio: bytes | str) -> str | list[str]:
+    def transcribe(self, audio: bytes | str) -> str | list[str]:
         """
-        Transcribe audio to text.
-        
+        Converts speech audio to text using NVIDIA's Parakeet ASR model.
+
+        This method accepts either a URL pointing to a 16kHz, mono WAV file or raw PCM audio bytes 
+        (16-bit signed int, 16kHz, mono). It automatically loads and decodes the audio, processes 
+        it with the ASR model, and returns the textual transcription(s).
+
         Args:
-            audio: Either a URL to a WAV file (16kHz, mono) or raw PCM bytes
+            audio: Either a direct URL to a 16kHz, mono WAV file, or raw PCM audio bytes
                    (16-bit signed int, 16kHz, mono).
             
         Returns:
-            Transcript string.
+            str: The transcription if a single utterance is detected.
+            list[str]: A list of transcriptions if multiple utterances are detected.
         """
 
         t0 = time.time()
@@ -110,9 +112,12 @@ class SimpleSTT():
             # Fetch WAV from URL and decode
             audio_content = requests.get(audio).content
             audio_obj = io.BytesIO(audio_content)
-            audio, sample_rate = sf.read(audio_obj, dtype='float32')
-            if sample_rate != SAMPLE_RATE:
-                raise ValueError(f"Sample rate mismatch: {sample_rate} != {SAMPLE_RATE}")
+            try:
+                audio, sample_rate = sf.read(audio_obj, dtype='float32')
+                if sample_rate != SAMPLE_RATE:
+                    raise ValueError(f"Sample rate mismatch: {sample_rate} != {SAMPLE_RATE}")
+            except Exception as e:
+                raise ValueError(f"Error reading audio file from URL ({audio}): {type(e).__name__}: {e}")
         else:
             # Convert raw PCM bytes to float32 normalized to [-1, 1]
             audio = np.frombuffer(audio, dtype=np.int16)
@@ -129,5 +134,3 @@ class SimpleSTT():
             return transcripts[0]
         else:
             return transcripts
-
-

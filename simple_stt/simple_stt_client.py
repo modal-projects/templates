@@ -2,11 +2,11 @@
 Client for the SimpleSTT Modal service.
 
 Usage:
-    python simple_stt_client.py [url]
+    python simple_stt/simple_stt_client.py [url]
 
 Examples:
-    python simple_stt_client.py                              # uses default test audio
-    python simple_stt_client.py https://example.com/audio.wav
+    python simple_stt/simple_stt_client.py # uses default test audio
+    python simple_stt/simple_stt_client.py https://example.com/audio.wav
 """
 import argparse
 import time
