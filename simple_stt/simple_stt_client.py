@@ -8,6 +8,7 @@ Examples:
     python simple_stt/simple_stt_client.py # uses default test audio
     python simple_stt/simple_stt_client.py https://example.com/audio.wav
 """
+
 import argparse
 import time
 
@@ -16,9 +17,7 @@ import modal
 DEFAULT_AUDIO_URL = "https://modal-cdn.com/a_dream_within_a_dream_16000_mono.wav"
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Transcribe audio using SimpleSTT."
-    )
+    parser = argparse.ArgumentParser(description="Transcribe audio using SimpleSTT.")
     parser.add_argument(
         "url",
         nargs="?",
