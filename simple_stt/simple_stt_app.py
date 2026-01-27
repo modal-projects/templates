@@ -111,18 +111,18 @@ class SimpleSTT:
         t0 = time.time()
 
         if isinstance(audio, str):
-            # Fetch WAV from URL and decode
-            audio_content = requests.get(audio).content
-            audio_obj = io.BytesIO(audio_content)
             try:
+            # Fetch WAV from URL and decode
+                audio_content = requests.get(audio).content
+                audio_obj = io.BytesIO(audio_content)
                 audio, sample_rate = sf.read(audio_obj, dtype="float32")
-                if sample_rate != SAMPLE_RATE:
-                    raise ValueError(
-                        f"Sample rate mismatch: {sample_rate} != {SAMPLE_RATE}"
-                    )
             except Exception as e:
                 raise ValueError(
                     f"Error reading audio file from URL ({audio}): {type(e).__name__}: {e}"
+                )
+            if sample_rate != SAMPLE_RATE:
+                raise ValueError(
+                    f"Sample rate mismatch: {sample_rate} != {SAMPLE_RATE}"
                 )
         else:
             # Convert raw PCM bytes to float32 normalized to [-1, 1]
