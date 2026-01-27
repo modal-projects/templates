@@ -31,7 +31,7 @@ image = (
     )
     .env(
         {
-            "HF_HUB_ENABLE_HF_TRANSFER": "1",
+            "HF_XET_HIGH_PERFORMANCE": "1",
             "HF_HOME": CACHE_DIR,  # cache directory for Hugging Face models
             "CXX": "g++",
             "CC": "g++",
@@ -112,8 +112,10 @@ class SimpleSTT:
 
         if isinstance(audio, str):
             try:
-            # Fetch WAV from URL and decode
-                audio_content = requests.get(audio).content
+                # Fetch WAV from URL and decode
+                response = requests.get(audio)
+                response.raise_for_status()
+                audio_content = response.content
                 audio_obj = io.BytesIO(audio_content)
                 audio, sample_rate = sf.read(audio_obj, dtype="float32")
             except Exception as e:
