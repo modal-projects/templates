@@ -44,6 +44,7 @@ image = (
         "cuda-python==13.0.1",
         "soundfile==0.13.1",
         "requests==2.32.5",
+        "fastapi[standard]==0.115.4",
     )
     .entrypoint([])  # silence chatty logs by container on start
 )
@@ -89,6 +90,10 @@ class SimpleSTT:
         # run test request to warm up GPU
         for _ in range(4):
             self.transcribe.local(TEST_AUDIO_URL)
+
+    @modal.fastapi_endpoint()
+    def api(self, audio: bytes | str) -> str | list[str]:
+        return self.transcribe.local(audio)
 
     @modal.method()
     def transcribe(self, audio: bytes | str) -> str | list[str]:

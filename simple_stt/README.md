@@ -4,7 +4,7 @@ A speech-to-text service running on Modal using NVIDIA's Parakeet ASR model.
 
 ## Model
 
-This template uses [nvidia/parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3), a fast and accurate English ASR model. Runs on an L40S GPU.
+This template uses [nvidia/parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3), a fast and accurate multilanguage ASR model.
 
 ## Deploy
 
@@ -12,16 +12,15 @@ This template uses [nvidia/parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/p
 modal deploy -m simple-stt.simple_stt_app
 ```
 
-## Usage
+## Input formats
 
-### Client script
+The `transcribe` method accepts:
+- **URL** — a URL pointing to a WAV file (16kHz, mono)
+- **Raw bytes** — 16-bit PCM at 16kHz, mono
 
-```bash
-# Transcribe a URL (uses test audio if omitted)
-python simple-stt/simple_stt_client.py https://example.com/audio.wav
-```
+## Client
 
-### Programmatic access
+### Modal SDK 
 
 ```python
 import modal
@@ -35,8 +34,30 @@ transcript = stt.transcribe.remote("https://example.com/audio.wav")
 transcript = stt.transcribe.remote(audio_bytes)
 ```
 
-## Input formats
+### FastAPI HTTP endpoint
 
-The `transcribe` method accepts:
-- **URL** — a URL pointing to a WAV file (16kHz, mono)
-- **Raw bytes** — 16-bit PCM at 16kHz, mono
+```python
+import modal
+from urllib.request import urlopen
+from urllib.parse import urlencode
+import json
+
+stt = modal.Cls.from_name("simple-stt-template", "SimpleSTT")()
+endpoint_url = stt.api.get_web_url()
+
+url_with_params = f"{endpoint_url}?{urlencode({'audio': 'https://example.com/audio.wav'})}"
+with urlopen(url_with_params) as response:
+    transcript = json.load(response)
+```
+
+### Example
+Both approaches are demonstrated in `simple_stt_client.py`.
+
+To run the example client:
+
+```bash
+# Transcribe a URL (uses test audio if omitted)
+python simple-stt/simple_stt_client.py https://example.com/audio.wav
+```
+
+
