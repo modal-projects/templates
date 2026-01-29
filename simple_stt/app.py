@@ -1,7 +1,7 @@
 """
 Speech-to-text service using NVIDIA Parakeet on Modal.
 
-Deploy: modal deploy simple-stt/simple_stt_app.py
+Deploy: modal deploy simple_stt/app.py
 
 Usage:
     stt = modal.Cls.from_name("simple-stt-template", "SimpleSTT")()

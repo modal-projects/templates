@@ -9,7 +9,7 @@ This template uses [nvidia/parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/p
 ## Deploy
 
 ```bash
-modal deploy -m simple-stt.simple_stt_app
+modal deploy simple_stt/app.py
 ```
 
 ## Input formats
@@ -51,13 +51,13 @@ with urlopen(url_with_params) as response:
 ```
 
 ### Example
-Both approaches are demonstrated in `simple_stt_client.py`.
+Both approaches are demonstrated in `try.py`.
 
 To run the example client:
 
 ```bash
 # Transcribe a URL (uses test audio if omitted)
-python simple-stt/simple_stt_client.py https://example.com/audio.wav
+python simple_stt/try.py https://example.com/audio.wav
 ```
 
 
