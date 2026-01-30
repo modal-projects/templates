@@ -8,7 +8,7 @@ from typing import Optional
 
 import modal
 
-APP_NAME = "text-to-image"
+APP_NAME = "bootstrap-text-to-image"
 app = modal.App(APP_NAME)
 
 # Configure the container image with necessary dependencies

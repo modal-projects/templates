@@ -46,7 +46,7 @@ if __name__ == "__main__":
     results_dir = args.results_dir
     image_name = args.image_name
 
-    generator = modal.Cls.from_name("text-to-image", "ImageGenerator")()
+    generator = modal.Cls.from_name("bootstrap-text-to-image", "ImageGenerator")()
 
     print("Loading Stable Diffusion 3.5 Large Turbo on a cloud H100 GPU.")
     print(f"View progress in Modal dashboard: {generator.generate.get_dashboard_url()}.")
