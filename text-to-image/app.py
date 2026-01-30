@@ -1,11 +1,5 @@
 """
 Generate images from text using Stable Diffusion 3.5 Large Turbo.
-
-Deploy with:
-    modal deploy text_to_image.py
-
-Then run the client code:
-    python -m text_to_image
 """
 
 import io
