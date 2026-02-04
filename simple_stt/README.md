@@ -36,6 +36,12 @@ transcript = stt.transcribe.remote(audio_bytes)
 
 ### FastAPI HTTP endpoint
 
+```bash
+curl "https://<your-modal-username>--simple-stt-template-simplest-api.modal.run?audio=https://example.com/audio.wav"
+```
+
+Or in Python:
+
 ```python
 import modal
 from urllib.request import urlopen
