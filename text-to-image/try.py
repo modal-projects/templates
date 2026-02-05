@@ -50,10 +50,10 @@ if __name__ == "__main__":
 
     print("Loading Stable Diffusion 3.5 Large Turbo on a cloud H100 GPU.")
     print(f"View progress in Modal dashboard: {generator.generate.get_dashboard_url()}.")
+    print(f"Prompt: {prompt}")
 
     start = time.perf_counter()
     image_bytes = generator.generate.remote(prompt, batch_size=1)
-    print(f"Prompt: {prompt}")
     print(f"Elapsed: {time.perf_counter() - start:.2f} seconds")
 
     output_dir = Path(results_dir)
