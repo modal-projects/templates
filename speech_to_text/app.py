@@ -1,11 +1,5 @@
 """
-Speech-to-text service using NVIDIA Parakeet on Modal.
-
-Deploy: modal deploy simple_stt/app.py
-
-Usage:
-    stt = modal.Cls.from_name("simple-stt-template", "SimpleSTT")()
-    transcript = stt.transcribe.remote("https://example.com/audio.wav")
+Speech-to-text service using NVIDIA Parakeet
 """
 
 import logging
@@ -13,12 +7,10 @@ import time
 
 import modal
 
-app = modal.App(name="simple-stt-template")
+app = modal.App(name="bootstrap-text-to-speech")
 
 cache_volume = modal.Volume.from_name("stt-template-cache", create_if_missing=True)
 CACHE_DIR = "/cache"
-
-MINUTES = 60  # seconds
 
 TEST_AUDIO_URL = "https://modal-cdn.com/a_dream_within_a_dream_16000_mono.wav"
 
@@ -61,13 +53,14 @@ MODEL_NAME = "nvidia/parakeet-tdt-0.6b-v3"
 
 
 @app.cls(
-    gpu="L40S",
+    gpu="H100",
     image=image,
+    timeout=600,
     volumes={
         CACHE_DIR: cache_volume,
     },
 )
-class SimpleSTT:
+class STT:
     """Transcribes audio files or URLs using NVIDIA's Parakeet ASR model."""
 
     @modal.enter()
@@ -90,10 +83,6 @@ class SimpleSTT:
         # run test request to warm up GPU
         for _ in range(4):
             self.transcribe.local(TEST_AUDIO_URL)
-
-    @modal.fastapi_endpoint()
-    def api(self, audio: bytes | str) -> str | list[str]:
-        return self.transcribe.local(audio)
 
     @modal.method()
     def transcribe(self, audio: bytes | str) -> str | list[str]:
@@ -151,3 +140,7 @@ class SimpleSTT:
             return transcripts[0]
         else:
             return transcripts
+
+    @modal.fastapi_endpoint()
+    def web(self, audio: bytes | str) -> str | list[str]:
+        return self.transcribe.local(audio)

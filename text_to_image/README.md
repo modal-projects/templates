@@ -9,7 +9,7 @@ This template uses [Stable Diffusion 3.5 Large Turbo](https://huggingface.co/ada
 ## Deploy
 
 ```bash
-modal deploy -m text-to-image.tti_app
+modal deploy -m text_to_image.app
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ modal deploy -m text-to-image.tti_app
 
 ```bash
 # Sample client script to generate an image (uses a test prompt if omitted)
-python text-to-image/tti_client.py "A cat loafing in a sunbeam"
+python text_to_image/try.py "A cat loafing in a sunbeam"
 ```
 
 ### Web
@@ -26,8 +26,8 @@ python text-to-image/tti_client.py "A cat loafing in a sunbeam"
 A [web endpoint](https://modal.com/docs/guide/webhook-urls) is automatically generated for this inference function. The URL is printed out when you deploy the app; you can also find it in the Modal web dashboard under the page for the function.
 
 ```bash
-curl -X GET \
-  '{INSERT URL}' \
-  -H 'accept: application/json' \
+curl \
+  --get '<URL>' \
+  --data-urlencode 'prompt=<PROMPT>' \
   --output 'bootstrap-results-text_to_image/generated_image.png'
 ```

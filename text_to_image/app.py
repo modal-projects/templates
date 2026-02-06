@@ -8,8 +8,7 @@ from typing import Optional
 
 import modal
 
-APP_NAME = "bootstrap-text-to-image"
-app = modal.App(APP_NAME)
+app = modal.App(name="bootstrap-text-to-image")
 
 # Configure the container image with necessary dependencies
 CACHE_DIR = "/cache"
@@ -44,9 +43,6 @@ MODEL_ID = "adamo1139/stable-diffusion-3.5-large-turbo-ungated"
 MODEL_REVISION_ID = "9ad870ac0b0e5e48ced156bb02f85d324b7275d2"
 
 cache_volume = modal.Volume.from_name("hf-hub-cache", create_if_missing=True)
-
-CLS_NAME = "ImageGenerator"
-
 
 @app.cls(
     image=image,
