@@ -6,8 +6,6 @@ A speech-to-text service running on Modal using NVIDIA's Parakeet ASR model.
 
 This template uses [nvidia/parakeet-tdt-0.6b-v3](https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3), a fast and accurate multilanguage ASR model. Runs on an L40S. Inference takes ~45 seconds to [cold start](https://modal.com/docs/guide/cold-start).
 
-images are generated in ~1 second.
-
 ## Deploy
 
 ```bash
