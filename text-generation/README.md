@@ -1,4 +1,4 @@
-# Simple LLM Inference
+# Simple Text Generation
 
 An instruction-following language model service running on Modal using SGLang and Qwen3-4B.
 
@@ -9,7 +9,7 @@ This template uses [Qwen3/Qwen3-4B-Instruct-2507-FP8](https://huggingface.co/Qwe
 ## Deploy
 
 ```bash
-modal deploy llm-inference/app.py
+modal deploy text-generation/app.py
 ```
 
 ## Usage
@@ -18,30 +18,11 @@ modal deploy llm-inference/app.py
 
 ```bash
 # Generate from a prompt
-python llm-inference/client.py "Eli5 multi-party computation and how it relates to machine learning! Include a summary of the most important libraries that support both."
+python text-generation/client.py "What is multi-party computation? ELI5, ELI20, and ELIPhD."
 ```
 
 ### Programmatic access
 
-```python
-import modal
-import openai
-
-llm = modal.Cls.from_name("qwen3-4b-inference", "SGLang")()
-modal_endpoint = llm.serve.get_web_url()
-base_url = modal_endpoint + "/v1"
-
-client = openai.OpenAI(base_url=base_url, api_key="empty")
-
-response = client.chat.completions.create(
-    model="default",
-    messages=[
-        {
-            "role": "user",
-            "content": "Eli5 multi-party computation and how it relates to machine learning!",
-        }
-    ],
-)
-
-print(response.choices[0].message.content)
-```
+The language model service exposes an OpenAI-compatible API,
+so you can integrate it with clients that speak that API,
+like the `openai` Python SDK, the Vercel AI SDK, and OpenCode.
