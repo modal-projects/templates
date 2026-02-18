@@ -53,7 +53,7 @@ MODEL_NAME = "nvidia/parakeet-tdt-0.6b-v3"
 
 
 @app.cls(
-    gpu="H100",
+    gpu="L40S",
     image=image,
     timeout=600,
     volumes={
