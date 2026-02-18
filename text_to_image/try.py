@@ -42,6 +42,12 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    if args.prompt is None:
+        print("No prompt provided. Using default prompt.")
+        prompt = "A princess riding on a pony"
+    else:
+        prompt = args.prompt
+
     prompt = args.prompt
     results_dir = args.results_dir
     image_name = args.image_name
@@ -62,3 +68,4 @@ if __name__ == "__main__":
     output_path.write_bytes(image_bytes[0])
 
     print(f"✓ Image saved to: {output_path}")
+    print("\nGenerate another image by running: python text_to_image/try.py \"<PROMPT>\"")
