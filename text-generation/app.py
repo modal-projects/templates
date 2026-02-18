@@ -8,7 +8,7 @@ MINUTES = 60
 # Model configuration
 MODEL_NAME = "Qwen/Qwen3-4B-Instruct-2507-FP8"
 MODEL_REVISION = "8591804019c8b22094c3b5b4454e0edc05dffc98"
-GPU = "A100"
+GPU = "H100"
 PORT = 8000
 
 # Volumes for caching
