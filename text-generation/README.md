@@ -1,12 +1,8 @@
 # Simple Text Generation
 
-An instruction-following language model service running on Modal using SGLang and Qwen3-4B.
+An instruction-following language model service running on Modal using SGLang.
 
-## Model
-
-This template uses [Qwen3/Qwen3-4B-Instruct-2507-FP8](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507-FP8), a fast but knowledgeable language model. Runs on an A100 GPU.
-
-## Deploy
+## Deployment
 
 ```bash
 modal deploy text-generation/app.py
