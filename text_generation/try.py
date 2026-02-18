@@ -1,4 +1,4 @@
-"""Client for interacting with the SGLang inference server."""
+"""Client for interacting with the text generation server."""
 
 import asyncio
 import json
@@ -31,7 +31,7 @@ async def _send_streaming(session: aiohttp.ClientSession, messages: list):
         "/v1/chat/completions", json=payload, headers=headers
     ) as resp:
         resp.raise_for_status()
-        full_text = ""
+        full_text, chunk = "", ""
 
         async for raw in resp.content:
             line = raw.decode("utf-8", errors="ignore").strip()
@@ -45,10 +45,11 @@ async def _send_streaming(session: aiohttp.ClientSession, messages: list):
             try:
                 evt = json.loads(data)
                 delta = (evt.get("choices") or [{}])[0].get("delta", {})
-                chunk = delta.get("content")
-                if chunk:
+                chunk += delta.get("content") or ""
+                if chunk and "\n" in chunk:
                     print(chunk, end="", flush=True)
                     full_text += chunk
+                    chunk = ""
             except json.JSONDecodeError:
                 continue
 
@@ -85,4 +86,4 @@ if __name__ == "__main__":
     elapsed = time.perf_counter() - start
 
     print(response)
-    print(f"\n✓ Response received in {elapsed:.2f} seconds")
+    print(f"\n✓ Final token received in {elapsed:.2f} seconds")
