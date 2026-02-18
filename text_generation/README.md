@@ -5,7 +5,7 @@ An instruction-following language model service running on Modal using SGLang.
 ## Deployment
 
 ```bash
-modal deploy text-generation/app.py
+modal deploy -m text-generation.app
 ```
 
 ## Usage
@@ -14,7 +14,7 @@ modal deploy text-generation/app.py
 
 ```bash
 # Generate from a prompt
-python text-generation/client.py "What is multi-party computation? ELI5, ELI20, and ELIPhD."
+python -m text-generation.client "What is multi-party computation? ELI5, ELI20, and ELIPhD."
 ```
 
 ### Programmatic access
