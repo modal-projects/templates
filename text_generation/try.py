@@ -1,4 +1,4 @@
-"""Client for interacting with the text generation server."""
+"""Minimal client for interacting with the OpenAI API-compatible text generation server."""
 
 import asyncio
 import json
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     import modal
 
     parser = argparse.ArgumentParser(
-        description="Send a chat completion request to the deployed SGLang server."
+        description="Send a chat completion request to the deployed text generation server."
     )
     parser.add_argument(
         "prompt",
