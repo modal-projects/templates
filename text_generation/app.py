@@ -25,12 +25,13 @@ sglang_image = (
         {
             "HF_HUB_CACHE": HF_CACHE_PATH,
             "HF_XET_HIGH_PERFORMANCE": "1",
+            "SGLANG_ENABLE_JIT_DEEPGEMM": "0",
         }
     )
 )
 
 
-app = modal.App("qwen3-4b-inference")
+app = modal.App("bootstrap-text-generation")
 
 
 @app.cls(
@@ -59,8 +60,11 @@ class SGLang:
             "0.0.0.0",
             "--port",
             str(PORT),
+            "--disable-cuda-graph",
         ]
-        self.process = subprocess.Popen(cmd)
+        self.process = subprocess.Popen(
+            " ".join(cmd), start_new_session=True, shell=True
+        )
         self._wait_ready()
         self._warmup()
 
@@ -107,22 +111,32 @@ class SGLang:
         pass
 
 
-@app.local_entrypoint()
-async def test(prompt: str = None, timeout: int = 10):
-    """Test the deployed server."""
-    from llm_client import send_request
+client_image = modal.Image.debian_slim().uv_pip_install("openai==2.21.0")
 
-    # Try to look up deployed app first, fall back to ephemeral
-    try:
-        Deployed = modal.Cls.from_name("qwen3-4b-inference", "SGLang")
-        url = Deployed().serve.get_web_url()
-        print(f"Using deployed server at {url}")
-    except modal.exception.NotFoundError:
-        url = SGLang().serve.get_web_url()
-        print(f"Using ephemeral server at {url}")
+
+@app.function(image=client_image)
+def test_request(messages):
+    import openai
+
+    base_url = SGLang().serve.get_web_url() + "/v1"
+
+    client = openai.OpenAI(base_url=base_url, api_key="empty")
+
+    print("Sending messages:", *messages, sep="\n\t")
+    response = client.chat.completions.create(model="default", messages=messages)
+
+    print(response.choices[0].message.content)
+    return response.model_dump()
+
+
+@app.local_entrypoint()
+def test(prompt: str = None):
+    """Test the deployed server."""
+    url = SGLang().serve.get_web_url()
+    print(f"Using ephemeral server at {url}")
 
     if prompt is None:
         prompt = "Explain quantum computing in simple terms."
 
     messages = [{"role": "user", "content": prompt}]
-    await send_request(url, messages, timeout=timeout * MINUTES)
+    test_request.remote(messages)
