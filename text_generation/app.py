@@ -100,15 +100,15 @@ class SGLang:
                 timeout=30,
             ).raise_for_status()
 
+    @modal.web_server(port=PORT, startup_timeout=5 * MINUTES)
+    def serve(self):
+        "Stub method to connect our server to the web"
+        pass
+
     @modal.exit()
     def shutdown(self):
         """Terminate the SGLang server process."""
         self.process.terminate()
-
-    @modal.web_server(port=PORT, startup_timeout=5 * MINUTES)
-    def serve(self):
-        "Stub method to denote the `web_server` that was initialized during startup()"
-        pass
 
 
 client_image = modal.Image.debian_slim().uv_pip_install("openai==2.21.0")
