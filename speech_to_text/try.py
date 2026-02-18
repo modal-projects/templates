@@ -3,6 +3,9 @@ import json
 import time
 from urllib.request import urlopen
 from urllib.parse import urlencode
+from pathlib import Path
+from rich import print
+from rich.console import Console
 
 import modal
 
@@ -20,14 +23,24 @@ if __name__ == "__main__":
 
     stt = modal.Cls.from_name("bootstrap-text-to-speech", "STT")()
 
-    print("Loading NVIDIA Parakeet on a cloud L40S GPU.")
-    print(f"View progress in Modal dashboard: {stt.transcribe.get_dashboard_url()}.")
+    # print(f"\n\n===== Running {Path(__file__).name} to invoke the deployed function =====")
+    print("\n\n")
+    print("--------------------------------------------------------------------------------")
+    print(f"Running {Path(__file__).name} to invoke the deployed function")
+    print("--------------------------------------------------------------------------------")
 
     start = time.perf_counter()
-    transcript = stt.transcribe.remote(args.url)
+    with Console().status(
+        (
+            "Loading NVIDIA Parakeet on a cloud GPU and running inference.\n"
+            f"View progress in Modal dashboard: [magenta]{stt.transcribe.get_dashboard_url()}[/magenta]"
+        ),
+        spinner="dots",
+    ):
+        transcript = stt.transcribe.remote(args.url)
     elapsed = time.perf_counter() - start
 
     print(f"Elapsed: {elapsed:.2f} seconds")
     print(f"Transcript: {transcript}")
 
-    print("\nTranscribe another audio file by running: python text_to_speech/try.py \"<AUDIO FILE URL>\"")
+    print(f"\nTranscribe another audio file by running: python text_to_speech/{Path(__file__).name} \"<AUDIO FILE URL>\"")

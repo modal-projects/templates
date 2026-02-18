@@ -1,5 +1,7 @@
 import time
 from pathlib import Path
+from rich import print
+from rich.console import Console
 
 import modal
 
@@ -54,18 +56,28 @@ if __name__ == "__main__":
 
     generator = modal.Cls.from_name("bootstrap-text-to-image", "ImageGenerator")()
 
-    print("Loading Stable Diffusion 3.5 Large Turbo on a cloud H100 GPU.")
-    print(f"View progress in Modal dashboard: {generator.generate.get_dashboard_url()}.")
-    print(f"Prompt: {prompt}")
+    print("\n\n")
+    print("--------------------------------------------------------------------------------")
+    print(f"Running {Path(__file__).name} to invoke the deployed function")
+    print("--------------------------------------------------------------------------------")
 
     start = time.perf_counter()
-    image_bytes = generator.generate.remote(prompt, batch_size=1)
-    print(f"Elapsed: {time.perf_counter() - start:.2f} seconds")
+    with Console().status(
+        (
+            "Loading Stable Diffusion 3.5 Large Turbo on a cloud GPU and running inference.\n"
+            f"Prompt: {prompt}\n"
+            f"View progress in Modal dashboard: [magenta]{generator.generate.get_dashboard_url()}[/magenta]"
+        ),
+        spinner="dots",
+    ):
+        image_bytes = generator.generate.remote(prompt, batch_size=1)
+    elapsed = time.perf_counter() - start
 
+    print(f"Elapsed: {elapsed:.2f} seconds")
     output_dir = Path(results_dir)
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / f"{image_name}.png"
     output_path.write_bytes(image_bytes[0])
 
     print(f"✓ Image saved to: {output_path}")
-    print("\nGenerate another image by running: python text_to_image/try.py \"<PROMPT>\"")
+    print(f"\nGenerate another image by running: python text_to_image/{Path(__file__).name} \"<PROMPT>\"")
