@@ -24,12 +24,6 @@ async def send_request(
             except asyncio.TimeoutError:
                 print("Request timed out, retrying...")
                 await asyncio.sleep(1)
-            except aiohttp.ClientResponseError as e:
-                if e.status == 503:
-                    print("Server starting up (503), retrying...")
-                    await asyncio.sleep(1)
-                    continue
-                raise
     raise TimeoutError(f"No response within {timeout}s")
 
 
@@ -65,18 +59,6 @@ async def _send_streaming(session: aiohttp.ClientSession, messages: list):
 
         print()  # newline after stream
         return full_text
-
-
-async def _send_non_streaming(session: aiohttp.ClientSession, messages: list):
-    """Send non-streaming chat completion request."""
-    payload = {"messages": messages, "stream": False}
-
-    async with session.post("/v1/chat/completions", json=payload) as resp:
-        resp.raise_for_status()
-        result = await resp.json()
-        content = result["choices"][0]["message"]["content"]
-        print(content)
-        return content
 
 
 if __name__ == "__main__":
