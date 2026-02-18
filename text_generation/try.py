@@ -9,18 +9,13 @@ import aiohttp
 MINUTES = 60
 
 
-async def send_request(
-    url: str, messages: list, timeout: int = 5 * MINUTES, stream: bool = True
-):
+async def send_request(url: str, messages: list, timeout: int = 5 * MINUTES):
     """Send a chat completion request to the server."""
     deadline = time.time() + timeout
     async with aiohttp.ClientSession(base_url=url) as session:
         while time.time() < deadline:
             try:
-                if stream:
-                    return await _send_streaming(session, messages)
-                else:
-                    return await _send_non_streaming(session, messages)
+                return await _send_streaming(session, messages)
             except asyncio.TimeoutError:
                 print("Request timed out, retrying...")
                 await asyncio.sleep(1)
@@ -77,17 +72,17 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # Look up deployed server
-    Deployed = modal.Cls.from_name("qwen3-4b-inference", "SGLang")
-    url = Deployed().serve.get_web_url()
+    # Look up deployed server to get the URL
+    SGLang = modal.Cls.from_name("bootstrap-text-generation", "SGLang")
+    url = SGLang().serve.get_web_url()
 
     print(f"Sending request to {url}")
+    print(f"Prompt: {args.prompt}")
     messages = [{"role": "user", "content": args.prompt}]
 
     start = time.perf_counter()
     response = asyncio.run(send_request(url, messages))
     elapsed = time.perf_counter() - start
 
+    print(response)
     print(f"\n✓ Response received in {elapsed:.2f} seconds")
-    print("from Qwen3-4B running on Modal with SGLang")
-    print(f"Prompt: {args.prompt}")
