@@ -62,7 +62,8 @@ if __name__ == "__main__":
     print("--------------------------------------------------------------------------------")
 
     start = time.perf_counter()
-    with Console().status(
+    console = Console()
+    with console.status(
         (
             "Loading Stable Diffusion 3.5 Large Turbo on a cloud GPU and running inference.\n"
             f"Prompt: {prompt}\n"

@@ -23,14 +23,14 @@ if __name__ == "__main__":
 
     stt = modal.Cls.from_name("bootstrap-text-to-speech", "STT")()
 
-    # print(f"\n\n===== Running {Path(__file__).name} to invoke the deployed function =====")
     print("\n\n")
     print("--------------------------------------------------------------------------------")
     print(f"Running {Path(__file__).name} to invoke the deployed function")
     print("--------------------------------------------------------------------------------")
 
     start = time.perf_counter()
-    with Console().status(
+    console = Console()
+    with console.status(
         (
             "Loading NVIDIA Parakeet on a cloud GPU and running inference.\n"
             f"View progress in Modal dashboard: [magenta]{stt.transcribe.get_dashboard_url()}[/magenta]"
