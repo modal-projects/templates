@@ -3,36 +3,41 @@
 import asyncio
 import json
 import time
+from pathlib import Path
+from rich import print
 
 import aiohttp
 import modal
 
 MINUTES = 60
-GREEN = "\033[1;32m"
-ENDC = "\033[0m"
-
 
 def main(prompt: str, twice: bool = True):
     # Look up deployed server to get the URL
     SGLang = modal.Cls.from_name("bootstrap-text-generation", "SGLang")
     url = SGLang().serve.get_web_url()
 
-    print(f"{GREEN}Sending request to {url}{ENDC}")
-    print(f"{GREEN}Prompt: {prompt}{ENDC}")
+    print("\n\n")
+    print("--------------------------------------------------------------------------------")
+    print(f"Running {Path(__file__).name} to invoke the deployed function")
+    print("--------------------------------------------------------------------------------")
+    print(f"[green]Sending request to {url}[/green]")
+    print("[green]Loading Qwen3-4B-Instruct on a cloud GPU and running inference.[/green]")
+    print(f"[green]View progress in Modal dashboard: [magenta]{SGLang().serve.get_dashboard_url()}[/magenta][green]")
+    print(f"[green]Prompt: {prompt}[/green]")
     messages = [{"role": "user", "content": prompt}]
 
     start = time.perf_counter()
     response = asyncio.run(send_request(url, messages))
     elapsed = time.perf_counter() - start
 
-    print(f"{GREEN}\n✓ Final token received in {elapsed:.2f} seconds{ENDC}")
+    print(f"[green]\n✓ Final token received in {elapsed:.2f} seconds[/green]")
     if twice:
-        print(f"{GREEN}\nRepeating request to {url}{ENDC}")
-        print(f"{GREEN}Prompt: {prompt}{ENDC}")
+        print(f"[green]\nRepeating request to {url}[/green]")
+        print(f"[green]Prompt: {prompt}[/green]")
         start = time.perf_counter()
         response = asyncio.run(send_request(url, messages))
         elapsed = time.perf_counter() - start
-        print(f"{GREEN}\n✓ Final token received in {elapsed:.2f} seconds{ENDC}")
+        print(f"[green]\n✓ Final token received in {elapsed:.2f} seconds[/green]")
 
 
 async def send_request(url: str, messages: list, timeout: int = 5 * MINUTES):
