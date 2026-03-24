@@ -32,15 +32,15 @@ if __name__ == "__main__":
     console = Console()
     with console.status(
         (
-            "Loading NVIDIA Parakeet on a cloud GPU and running inference.\n"
-            f"View progress in Modal dashboard: [magenta]{stt.transcribe.get_dashboard_url()}[/magenta]"
+            "[green]Loading NVIDIA Parakeet on a cloud GPU and running inference.[/green]\n"
+            f"[green]View progress in Modal dashboard: [magenta]{stt.transcribe.get_dashboard_url()}[/magenta][/green]"
         ),
         spinner="dots",
     ):
         transcript = stt.transcribe.remote(args.url)
     elapsed = time.perf_counter() - start
 
-    print(f"Elapsed: {elapsed:.2f} seconds")
+    print(f"[green]Elapsed: {elapsed:.2f} seconds[/green]")
     print(f"Transcript: {transcript}")
 
-    print(f"\nTranscribe another audio file by running: python text_to_speech/{Path(__file__).name} \"<AUDIO FILE URL>\"")
+    print(f"[green]\nTranscribe another audio file by running: python text_to_speech/{Path(__file__).name} \"<AUDIO FILE URL>\"[/green]")

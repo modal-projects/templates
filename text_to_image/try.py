@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "results_dir",
         nargs="?",
-        default="./bootstrap-results-text_to_image",
+        default=str(Path(__file__).parent),
         help="Directory to save the generated image.",
     )
     parser.add_argument(
@@ -65,20 +65,20 @@ if __name__ == "__main__":
     console = Console()
     with console.status(
         (
-            "Loading Stable Diffusion 3.5 Large Turbo on a cloud GPU and running inference.\n"
-            f"Prompt: {prompt}\n"
-            f"View progress in Modal dashboard: [magenta]{generator.generate.get_dashboard_url()}[/magenta]"
+            "[green]Loading Stable Diffusion 3.5 Large Turbo on a cloud GPU and running inference.[/green]\n"
+            f"[green]Prompt: {prompt}[/green]\n"
+            f"[green]View progress in Modal dashboard: [magenta]{generator.generate.get_dashboard_url()}[/magenta][/green]"
         ),
         spinner="dots",
     ):
         image_bytes = generator.generate.remote(prompt, batch_size=1)
     elapsed = time.perf_counter() - start
 
-    print(f"Elapsed: {elapsed:.2f} seconds")
+    print(f"[green]Elapsed: {elapsed:.2f} seconds[/green]")
     output_dir = Path(results_dir)
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / f"{image_name}.png"
     output_path.write_bytes(image_bytes[0])
 
-    print(f"✓ Image saved to: {output_path}")
-    print(f"\nGenerate another image by running: python text_to_image/{Path(__file__).name} \"<PROMPT>\"")
+    print(f"[green]✓ Image saved to: {output_path}[/green]")
+    print(f"[green]\nGenerate another image by running: python text_to_image/{Path(__file__).name} \"<PROMPT>\"[/green]")
